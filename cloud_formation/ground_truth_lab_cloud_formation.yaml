@@ -1,0 +1,62 @@
+AWSTemplateFormatVersion: 2010-09-09
+Parameters: 
+  InstanceTypeParameter: 
+    Type: String
+    Default: ml.p3.2xlarge
+    AllowedValues: 
+      - ml.c5.xlarge      
+      - ml.p3.2xlarge
+      - ml.m5.xlarge
+    Description: Default is ml.c5.4xlarge, MXNet Labs require ml.p3.2xlarge, MXNet Lab3 requires ml.p3.8xlarge.
+Resources:
+  NotebookRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          Effect: Allow
+          Principal:
+            Service:
+              - sagemaker.amazonaws.com
+          Action:
+            - 'sts:AssumeRole'
+      Description: >-
+        The Role that the Jupyter Notebook runs under, provides access to S3,
+        and AI Services such as comprehend.
+      ManagedPolicyArns:
+        - 'arn:aws:iam::aws:policy/AmazonS3FullAccess'
+        - 'arn:aws:iam::aws:policy/AmazonSageMakerFullAccess'
+        - 'arn:aws:iam::aws:policy/IAMFullAccess'
+      Tags:
+        - Key: Project
+          Value: Ground Truth Hands On Lab
+          
+  NotebookInstance:
+    Type: 'AWS::SageMaker::NotebookInstance'
+    Properties:
+      NotebookInstanceName: Ground-Truth
+      InstanceType: 
+           Ref: InstanceTypeParameter
+      RoleArn: !GetAtt NotebookRole.Arn
+      LifecycleConfigName: !GetAtt NotebookLifecycle.NotebookInstanceLifecycleConfigName
+      Tags:
+        - Key: Project
+          Value: Ground Truth Hands On Lab
+          
+  NotebookLifecycle:
+    Type: 'AWS::SageMaker::NotebookInstanceLifecycleConfig'
+    Properties:
+        NotebookInstanceLifecycleConfigName: SetupDefaultNotebooks
+        OnCreate:
+            - Content:
+                Fn::Base64:
+                    !Sub |
+                    #!/bin/bash
+
+                    #Code files and data
+                    git clone  https://github.com/szamarin/ground_truth_lab.git
+                    mv ground_truth_lab '/home/ec2-user/SageMaker/ground_truth_lab'
+                   
+                    #fix permissions
+                    chown -R ec2-user:ec2-user /home/ec2-user/SageMaker/*

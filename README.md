@@ -11,6 +11,6 @@ In this Hands-On Lab you will gain an overview of of how SageMaker Ground Truth 
 ## Getting Started
 1. Login to your AWS Account
 2. Launch the CloudFormation Stack
-[<img src="notebook_images/cloudformation-launch-stack.png">](https://console.aws.amazon.com/cloudformation/home?region=us-east-2#/stacks/new?stackName=ground-truth-lab&templateURL=https://s3.amazonaws.com/mldayasset.corp.amazon.com/ml_immersion_day_cloud_formation.yaml)
+[<img src="notebook_images/cloudformation-launch-stack.png">](https://console.aws.amazon.com/cloudformation/home?region=us-east-2#/stacks/new?stackName=ground-truth-lab&templateURL=https://s3.amazonaws.com/cf-gt-lab-bucket/ground_truth_lab_cloud_formation.yaml)
 3. Navigate to SageMaker in the AWS Management Console and open JupyterLab on your notebook Instance
 4. Follow instructions in the *ground_truth_lab.ipynb* notebook
