@@ -74,12 +74,12 @@ def euclidean_distance(vects):
 
 @tf.function
 def contrastive_loss(y_true, y_pred):
-    margin = 1
+    margin = args.margin
     return K.mean(y_true * K.square(y_pred) +
                   (1 - y_true) * K.square(K.maximum(margin - y_pred, 0))
                  )
 
-def model(data, epochs, steps_per_epoch):
+def build_model(data, epochs, steps_per_epoch):
     
     "Create and train the model"
     
@@ -111,6 +111,7 @@ if __name__ =='__main__':
     parser.add_argument('--epochs', type=int, default=10)
     parser.add_argument('--steps_per_epoch', type=int, default=10)
     parser.add_argument('--batch_size', type=int, default=32)
+    parser.add_argument('--margin', type=int, default=1)
 
     # input data and model directories
     parser.add_argument('--model_dir', type=str)
@@ -122,6 +123,6 @@ if __name__ =='__main__':
     
     data = create_data_set(manifest_path, args.batch_size)
     
-    model = model(data, args.epochs, args.steps_per_epoch)
+    model = build_model(data, args.epochs, args.steps_per_epoch)
     
     model.save(os.path.join(os.environ.get('SM_MODEL_DIR'), '000000001'))
